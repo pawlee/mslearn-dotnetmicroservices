@@ -26,8 +26,8 @@ spec:
       containers:
         - env:
             - name: backendUrl
-              value: http://backend
-          image: pizzafrontend
+              value: http://backend:5001
+          image: localhost:5000/pizzafrontend:latest
           name: frontend
           ports:
             - containerPort: 80

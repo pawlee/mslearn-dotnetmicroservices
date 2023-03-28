@@ -1,0 +1,42 @@
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: example-ingress
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /$2
+# spec:
+#   rules:
+#   - http:
+#       paths:
+#       - pathType: Prefix
+#         path: /(/|$)(.*)
+#         backend:
+#           service:
+#             name: frontend
+#             port:
+#               number: 80
+#       - pathType: Exact
+#         path: /privacy
+#         backend:
+#           service:
+#             name: frontend
+#             port:
+#               number: 80
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /pizza(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80

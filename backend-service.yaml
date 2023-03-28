@@ -10,8 +10,7 @@ metadata:
   name: backend
 spec:
   ports:
-    - name: "5000"
-      port: 5000
+    - port: 5001
       targetPort: 80
   selector:
     io.kompose.service: backend

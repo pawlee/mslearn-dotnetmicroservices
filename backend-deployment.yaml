@@ -24,7 +24,7 @@ spec:
         io.kompose.service: backend
     spec:
       containers:
-        - image: pizzabackend
+        - image: localhost:5000/pizzabackend:latest
           name: backend
           ports:
             - containerPort: 80
