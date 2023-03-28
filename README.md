@@ -1,46 +1,51 @@
-## Sample for the Build your first microservice in .NET learn module
+Forked from https://github.com/MicrosoftDocs/mslearn-dotnetmicroservices
 
-Microservice applications are composed of small, independently versioned, and scalable customer-focused services that communicate with each other over standard protocols with well-defined interfaces. Each microservice typically encapsulates simple business logic, which you can scale out or in, test, deploy, and manage independently.  Smaller teams develop a microservice based on a customer scenario and use any technologies that they want to use. This module will teach you how to build your first microservice with .NET.
+### Prerequisites
 
-In order to run the code in this repo as a microservice, please complete the [Build your first microservice in .NET](https://docs.microsoft.com/learn/modules/dotnet-microservices).
+Docker Destop<br>
+kind (https://github.com/kubernetes-sigs/kind)
 
 ### Steps to run
 
-1. You will need to add the **Dockerfile** to the web API in the backend folder.
-1. And add the **docker-compose.yml** file to the root folder.
+1. Setup local docker registry
+2. Start kind cluster
+4. Start pods
 
-Along with the necessary Docker commands for building an image and running Docker compose as well.
+### Setup local docker registry
 
-Check out the Learn module to find out all about [Building your first microservice in .NET](https://docs.microsoft.com/learn/modules/dotnet-microservices).
+Adapated from https://kind.sigs.k8s.io/docs/user/local-registry/
 
+1. Add insecure registry to Docker Desktop (https://docs.docker.com/registry/insecure/)
+2. Start registry <code>docker run -d -p "127.0.0.1:5000:5000" --restart=always --name kind-registry registry:2</code>
+3. Connect registry to the cluster network <code>docker network connect "kind" "kind-registry"</code>
+4. ?? Don't remember the last step in https://kind.sigs.k8s.io/docs/user/local-registry/
+5. Add images to registry:<br>
+<code>
+    docker-compose build<br>
+    docker tag pizzabackend:latest 127.0.0.1:5000/pizzabackend:latest<br>
+    docker push 127.0.0.1:5000/pizzabackend:latest<br>
+    docker tag pizzafrontend:latest 127.0.0.1:5000/pizzafrontend:latest<br>
+    docker push 127.0.0.1:5000/pizzafrontend:latest
+</code>
 
-## Contributing
+### Start kind cluster
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+Adapted from https://kind.sigs.k8s.io/docs/user/quick-start/.
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+To start: <code>kind create cluster --config kind-dev-cluster.yaml</code>
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+### Start pods
 
-## Legal Notices
+Kind ngnix ingress (https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx) <code>kubectl apply -f nginx-ingress.yaml</code><br>
 
-Microsoft and any contributors grant you a license to the Microsoft documentation and other content
-in this repository under the [Creative Commons Attribution 4.0 International Public License](https://creativecommons.org/licenses/by/4.0/legalcode),
-see the [LICENSE](LICENSE) file, and grant you a license to any code in the repository under the [MIT License](https://opensource.org/licenses/MIT), see the
-[LICENSE-CODE](LICENSE-CODE) file.
+Wait until ready<br>
+<code>
+kubectl wait --namespace ingress-nginx \<br>
+  --for=condition=ready pod \<br>
+  --selector=app.kubernetes.io/component=controller \<br>
+  --timeout=90s
+</code>
 
-Microsoft, Windows, Microsoft Azure and/or other Microsoft products and services referenced in the documentation
-may be either trademarks or registered trademarks of Microsoft in the United States and/or other countries.
-The licenses for this project do not grant you rights to use any Microsoft names, logos, or trademarks.
-Microsoft's general trademark guidelines can be found at http://go.microsoft.com/fwlink/?LinkID=254653.
+Start our services <code>kubectl apply -f backend-deployment.yaml,backend-service.yaml,frontend-deployment.yaml,frontend-service.yaml,frontend-ingress.yaml</code>
 
-Privacy information can be found at https://privacy.microsoft.com/en-us/
-
-Microsoft and any contributors reserve all other rights, whether under their respective copyrights, patents,
-or trademarks, whether by implication, estoppel or otherwise.
+Use <code>http://localhost/pizza</code> and <code>http://localhost/pizza/privacy</code> to access the frontend service.
