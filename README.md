@@ -21,11 +21,11 @@ Adapated from https://kind.sigs.k8s.io/docs/user/local-registry/
 4. ?? Don't remember the last step in https://kind.sigs.k8s.io/docs/user/local-registry/
 5. Add images to registry:<br>
 <code>
-    docker-compose build<br>
-    docker tag pizzabackend:latest 127.0.0.1:5000/pizzabackend:latest<br>
-    docker push 127.0.0.1:5000/pizzabackend:latest<br>
-    docker tag pizzafrontend:latest 127.0.0.1:5000/pizzafrontend:latest<br>
-    docker push 127.0.0.1:5000/pizzafrontend:latest
+docker-compose build<br>
+docker tag pizzabackend:latest 127.0.0.1:5000/pizzabackend:latest<br>
+docker push 127.0.0.1:5000/pizzabackend:latest<br>
+docker tag pizzafrontend:latest 127.0.0.1:5000/pizzafrontend:latest<br>
+docker push 127.0.0.1:5000/pizzafrontend:latest
 </code>
 
 ### Start kind cluster
@@ -39,11 +39,10 @@ To start: <code>kind create cluster --config kind-dev-cluster.yaml</code>
 Kind ngnix ingress (https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx) <code>kubectl apply -f nginx-ingress.yaml</code><br>
 
 Wait until ready<br>
-<code>
-kubectl wait --namespace ingress-nginx \<br>
-  --for=condition=ready pod \<br>
-  --selector=app.kubernetes.io/component=controller \<br>
-  --timeout=90s
+<code>kubectl wait --namespace ingress-nginx \ <br>
+--for=condition=ready pod \ <br>
+--selector=app.kubernetes.io/component=controller \ <br>
+--timeout=90s
 </code>
 
 Start our services <code>kubectl apply -f backend-deployment.yaml,backend-service.yaml,frontend-deployment.yaml,frontend-service.yaml,frontend-ingress.yaml</code>
