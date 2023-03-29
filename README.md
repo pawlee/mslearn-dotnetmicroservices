@@ -19,14 +19,13 @@ Adapated from https://kind.sigs.k8s.io/docs/user/local-registry/
 2. Start registry <code>docker run -d -p "127.0.0.1:5000:5000" --restart=always --name kind-registry registry:2</code>
 3. Connect registry to the cluster network <code>docker network connect "kind" "kind-registry"</code>
 4. ?? Don't remember the last step in https://kind.sigs.k8s.io/docs/user/local-registry/
-5. Add images to registry:<br>
-<code>
-docker-compose build<br>
-docker tag pizzabackend:latest 127.0.0.1:5000/pizzabackend:latest<br>
-docker push 127.0.0.1:5000/pizzabackend:latest<br>
-docker tag pizzafrontend:latest 127.0.0.1:5000/pizzafrontend:latest<br>
-docker push 127.0.0.1:5000/pizzafrontend:latest
-</code>
+5. Add images to registry:
+   - <code>docker-compose build<br>
+     docker tag pizzabackend:latest 127.0.0.1:5000/pizzabackend:latest<br>
+     docker push 127.0.0.1:5000/pizzabackend:latest<br>
+     docker tag pizzafrontend:latest 127.0.0.1:5000/pizzafrontend:latest<br>
+     docker push 127.0.0.1:5000/pizzafrontend:latest
+     </code>
 
 ### Start kind cluster
 
